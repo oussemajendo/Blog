@@ -2,34 +2,45 @@ import { useState } from "react";
 import "./comment-list.css";
 import UpdateCommentModal from "./UpdateCommentModal";
 import swal from "sweetalert";
+import Moment from "react-moment";
+import { useSelector,useDispatch } from "react-redux";
+import { deleteComment } from "../../redux/apiCalls/commentApiCall";
 
-const CommentList = () => {
+
+const CommentList = ( {comments}) => {
+  const dispatch = useDispatch();
+
+  const { user } = useSelector(state => state.auth);
+
   const [updateComment, setUpdateComment] = useState(false);
+  const [commentForUpdate,setCommentForUpdate] = useState(null);
+
+  // update comment handler
+  const updateCommenthandler = (comment) =>{
+    setCommentForUpdate(comment);
+    setUpdateComment(true);
+  }
 
   // Delete Comment Handler
-  const deleteCommentHandler = () => {
+  const deleteCommentHandler = ( commentId) => {
     swal({
       title: "Are you sure?",
       text: "Once deleted, you will not be able to recover this comment!",
       icon: "warning",
       buttons: true,
       dangerMode: true,
-    }).then((willDelete) => {
-      if (willDelete) {
-        swal("comment has been deleted!", {
-          icon: "success",
-        });
-      } else {
-        swal("Something went wrong!");
-      }
+    }).then((isOk) => {
+      if (isOk) {
+       dispatch(deleteComment(commentId));
+        }
     });
   };
 
   return (
     <div className="comment-list">
-      <h4 className="comment-list-count">2 Comments</h4>
-      {[1, 2].map((comment) => (
-        <div key={comment} className="comment-item">
+      <h4 className="comment-list-count">{comments?.length} Comments</h4>
+      {comments?.map((comment) => (
+        <div key={comment._id} className="comment-item">
           <div className="comment-item-info">
             <div className="comment-item-user-info">
               <img
@@ -37,22 +48,32 @@ const CommentList = () => {
                 alt=""
                 className="comment-item-user-photo"
               />
-              <span className="comment-item-username">Youssef Abbas</span>
+              <span className="comment-item-username">{comment.username}</span>
             </div>
-            <div className="comment-item-time">4 hours ago</div>
+            <div className="comment-item-time">
+              <Moment fromNow ago>
+              {comment.createdAt}
+              </Moment> {" "}
+              ago
+            </div>
           </div>
-          <p className="comment-item-text">this is so great</p>
-          <div className="comment-item-icon-wrapper">
+          <p className="comment-item-text">{comment.text}</p>
+           {user?._id === comment.user && (
+            <div className="comment-item-icon-wrapper">
             <i
-              onClick={() => setUpdateComment(true)}
+              onClick={() => updateCommenthandler(comment)}
               className="bi bi-pencil-square"
             ></i>
-            <i onClick={deleteCommentHandler} className="bi bi-trash-fill"></i>
+            <i onClick={() => deleteCommentHandler(comment?._id)} 
+            className="bi bi-trash-fill"></i>
           </div>
+           )}
         </div>
       ))}
       {updateComment && (
-        <UpdateCommentModal setUpdateComment={setUpdateComment} />
+        <UpdateCommentModal  
+        commentForUpdate={commentForUpdate} 
+        setUpdateComment={setUpdateComment} />
       )}
     </div>
   );

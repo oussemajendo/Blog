@@ -97,6 +97,11 @@
     cursor: pointer;
 }
 
+.post-details-info-write{
+    font-size: 17px;
+    color: var(--gray-color);
+}
+
 /* Media Query */
 @media (max-width: 820px) {
     .post-details {

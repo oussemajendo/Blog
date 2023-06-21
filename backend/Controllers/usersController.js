@@ -76,43 +76,40 @@ const { Post } = require("../models/Post");
  * @method POST
  * @access private (only logged in user)
  ---------------------------------------------------------------- */
- module.exports.profilePhotoUploadCtrl =asyncHandler(async(req,res)=>{
+ module.exports.profilePhotoUploadCtrl = asyncHandler(async (req, res) => {
   // Validation
-  if(!req.file){
-    return res.status(400).json({ message : "no file provided"});
+  if (!req.file) {
+    return res.status(400).json({ message: "No file provided" });
   }
-
-  // Get the path to the image
-  const imagePath = path.join(__dirname, `../images/${req.file.filename}`);
 
   // Upload to Cloudinary
-  const result = await cloudinaryUploadImage(imagePath);
-  console.log(result);
+  const result = await cloudinaryUploadImage(req.file.path);
 
-  // Get  the User from DB
+  // Get the User from DB
   const user = await User.findById(req.user.id);
 
-  // Delete the old profile photo if exist
-  if(user.profilePhoto.publicId !== null){
+  // Delete the old profile photo if it exists
+  if (user.profilePhoto && user.profilePhoto.publicId) {
     await cloudinaryRemoveImage(user.profilePhoto.publicId);
   }
-  // Change the photo profile field in DB
+
+  // Change the profile photo field in DB
   user.profilePhoto = {
-    url : result.secure_url,
-    publicId : result.public_id,
-  }
+    url: result.secure_url,
+    publicId: result.public_id,
+  };
   await user.save();
 
-  // Send response to client
-  res.status(200).json({ 
-    message: " your profile photo uploaded successfully",
-    profilePhoto : { url : result.secure_url, publicId : result.public_id }
+  // Send response to the client
+  res.status(200).json({
+    message: "Your profile photo uploaded successfully",
+    profilePhoto: { url: result.secure_url, publicId: result.public_id },
+  });
+
+  // Remove the temporary file from the server
+  fs.unlinkSync(req.file.path);
 });
 
-  // Remove image from the server
-  fs.unlinkSync(imagePath);
-
- });
  /**----------------------------------------------------------------
  * @desc  Delete User Profile (Account)
  * @Route /api/users/profile/:id

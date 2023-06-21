@@ -1,8 +1,19 @@
 import "./create-post.css";
 import { toast } from "react-toastify";
-import { useState } from "react";
+import { useState ,useEffect} from "react";
+import { useDispatch , useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { createPost } from "../../redux/apiCalls/postApiCall";
+import { RotatingLines } from "react-loader-spinner";
+import { fetchCategories } from "../../redux/apiCalls/categoryApiCall";
+
 
 const CreatePost = () => {
+  const dispatch = useDispatch();
+  const {loading, isPostCreated} = useSelector( state => state.post);
+  const { categories } = useSelector(state => state.category);
+
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
@@ -23,9 +34,19 @@ const CreatePost = () => {
     formData.append("description", description);
     formData.append("category", category);
         
-    // @to do
-    console.log({ title, category, description });
+    dispatch(createPost(formData));
   };
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isPostCreated) {
+      navigate("/");
+    }
+  }, [isPostCreated, navigate]);
+   useEffect (()=>{
+    dispatch(fetchCategories());
+   },[]);
 
   return (
     <section className="create-post">
@@ -46,8 +67,8 @@ const CreatePost = () => {
           <option disabled value="">
             Select A Category
           </option>
-          <option value="music">music</option>
-          <option value="travelling">travelling</option>
+          {categories.map(category => 
+          <option key={category._id} value={category.title}>{category.title}</option> )}
         </select>
         <textarea
           className="create-post-textarea"
@@ -64,7 +85,19 @@ const CreatePost = () => {
           onChange={(e) => setFile(e.target.files[0])}
         />
         <button type="submit" className="create-post-btn">
-          Create
+          {
+            loading ? 
+            (
+              <RotatingLines
+                  strokeColor="white"
+                  strokeWidth="5"
+                  animationDuration="0.75"
+                  width="40"
+                  visible={true}
+                />
+            )
+            : "Create"
+          }  
         </button>
       </form>
     </section>

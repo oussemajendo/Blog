@@ -27,7 +27,6 @@ module.exports.createCategoryCtrl = asyncHandler(async (req, res) => {
  * @access  public
  ------------------------------------------------*/
  module.exports.getAllCategoriesCtrl = asyncHandler(async (req, res) => {
-    fffff
     const categories = await Category.find();
     res.status(200).json(categories);
   });
