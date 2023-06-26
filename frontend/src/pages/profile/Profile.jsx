@@ -3,15 +3,16 @@ import { useEffect, useState } from "react";
 import UpdateProfileModal from "./UpdateProfileModal";
 import swal from "sweetalert";
 import{ useDispatch,useSelector } from"react-redux";
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { uploadProfilePhoto, getUserProfile } from "../../redux/apiCalls/profileApiCall";
+import { uploadProfilePhoto, getUserProfile, deleteProfile } from "../../redux/apiCalls/profileApiCall";
 import PostItem from "../../components/posts/PostItem";
-
+import { Oval } from "react-loader-spinner";
+import { logoutUser } from "../../redux/apiCalls/authApiCall"
 
 const Profile = () => {
    const dispatch = useDispatch();
-   const { profile } = useSelector(state => state.profile);
+   const { profile,loading,isProfileDeleted } = useSelector(state => state.profile);
    const { user } = useSelector(state => state.auth);
 
 
@@ -25,6 +26,13 @@ const Profile = () => {
     dispatch(getUserProfile(id))
     window.scrollTo(0, 0);
   }, [id,dispatch]);
+   
+  const navigate = useNavigate();
+  useEffect(() => {
+   if(isProfileDeleted){
+    navigate("/");
+   }
+  }, [navigate,isProfileDeleted]);
 
   // Form Submit Handler
   const formSubmitHandler = (e) => {
@@ -44,17 +52,31 @@ const Profile = () => {
       icon: "warning",
       buttons: true,
       dangerMode: true,
-    }).then((willDelete) => {
-      if (willDelete) {
-        swal("Account has been deleted!", {
-          icon: "success",
-        });
-      } else {
-        swal("Something went wrong!");
+    }).then((isOk) => {
+      if (isOk) {
+          dispatch(deleteProfile(user?._id));
+          dispatch(logoutUser());
       }
     });
   }
+     if(loading){
+      return (
+      <div className="profile-loader">
+        <Oval
+              height={120}
+              width={120}
+              color="#000"
+              wrapperStyle={{}}
+              wrapperClass=""
+              visible={true}
+              ariaLabel='oval-loading'
+              secondaryColor="grey"
+              strokeWidth={3}
+              strokeWidthSecondary={3}
 
+            />
+      </div>
+     )}
   return (
     <section className="profile">
       <div className="profile-header">
@@ -102,7 +124,7 @@ const Profile = () => {
       <div className="profile-posts-list">
         <h2 className="profile-posts-list-title">{profile?.username} Posts</h2>
         {
-          profile?.posts.map(post => 
+          profile?.posts?.map(post => 
             <PostItem
              key={post._id}
              post={post}

@@ -55,7 +55,8 @@ const { Post } = require("../models/Post");
       bio: req.body.bio,
     },
     { new: true }
-  ).select("-password");
+  ).select("-password")
+  .populate("posts");
   res.status(200).json(updateUser);
 });
 
@@ -134,7 +135,9 @@ const { Post } = require("../models/Post");
   }
 
   //Delete the profile picture from cloudinary 
+  if(user.profilePhoto.publicId === null){
     await cloudinaryRemoveImage(user.profilePhoto.publicId);
+  }
 
   //Delete user posts & comments
   await Post.deleteMany({ user: user._id });

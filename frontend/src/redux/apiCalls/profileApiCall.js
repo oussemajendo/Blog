@@ -74,4 +74,62 @@ export function updateProfile(userId,profile){
   }
 }
 
+//delete Profile 
+export function deleteProfile(userId){
+  return async (dispatch,getState) => {
+        try{
+          dispatch(profileActions.setLoading());
+    const { data } = await request
+    .delete(`/api/users/profile/${userId}`,{
+      headers : {
+           Authorization : "Bearer " + getState().auth.user.token,
+                }
+    });
+    dispatch(profileActions.setIsProfileDeleted());   
+    toast.success(data?.message);
+    setTimeout(()=> dispatch(profileActions.clearIsProfileDeleted()), 2000); 
+        }catch(error){
+         toast.error(error.response.data.message);
+         dispatch(profileActions.clearLoading());
+         
+        }
+  }
+}
+
+//get users count (for admin dashboard)
+export function getUsersCount(userId){
+  return async (dispatch,getState) => {
+        try{
+    const { data } = await request
+    .get(`/api/users/count`,{
+      headers : {
+           Authorization : "Bearer " + getState().auth.user.token,
+                }
+    });
+    dispatch(profileActions.setUserCount(data));   
+        }catch(error){
+         toast.error(error.response.data.message);
+         
+        }
+  }
+}
+
+//get all users profile (for admin dashboard)
+export function getAllUsersProfile(userId){
+  return async (dispatch,getState) => {
+        try{
+    const { data } = await request
+    .get(`/api/users/profile`,{
+      headers : {
+           Authorization : "Bearer " + getState().auth.user.token,
+                }
+    });
+    dispatch(profileActions.setprofiles(data));   
+        }catch(error){
+         toast.error(error.response.data.message);
+         
+        }
+  }
+}
+
 

@@ -1,4 +1,5 @@
 import { postActions } from "../slices/postSlice";
+import { commentActions } from "../slices/commentSlice";
 import request from "../../utils/request";
 import {toast} from "react-toastify"
 
@@ -38,14 +39,29 @@ export function updateComment(CommentId,comment){
 export function deleteComment(CommentId){
     return async (dispatch,getstate) => {
           try{            
-             const { data } = await request.delete(`/api/comments/${CommentId}`,{
+              await request.delete(`/api/comments/${CommentId}`,{
                 headers : {
                     Authorization : "Bearer " + getstate().auth.user.token,
                 }
              });
-               dispatch(postActions.deletCommentFromPost(data));
+               dispatch(commentActions.deleteComment(CommentId))
+               dispatch(postActions.deletCommentFromPost(CommentId));
           }catch(error){
-            console.log(error)
+           toast.error(error.response.data.message);
+          }
+    }
+}
+//Fetch All comments
+export function fetchAllComments(){
+    return async (dispatch,getstate) => {
+          try{            
+              const { data} = await request.get(`/api/comments/`,{
+                headers : {
+                    Authorization : "Bearer " + getstate().auth.user.token,
+                }
+             });
+               dispatch(commentActions.setComments(data))
+          }catch(error){
            toast.error(error.response.data.message);
           }
     }

@@ -1,7 +1,7 @@
 import { Link, } from "react-router-dom";
 
-const PostItem = ({post,username,userId,user}) => {
-  const profileLink = userId ? `/profile/${userId}` : `/profile/${post?.user._id}`
+const PostItem = ({post,username,userId}) => {
+  const profileLink = userId ? `/profile/${userId}` : `/profile/${post?.user?._id}`;
 
   // const navigate = useNavigate();
 
@@ -17,7 +17,7 @@ const PostItem = ({post,username,userId,user}) => {
   return (
     <div className="post-item">
       <div className="post-item-image-wrapper">
-        <img src={post?.image.url} alt="" className="post-itme-image" />
+        <img src={post?.image?.url} alt="" className="post-itme-image" />
       </div>
       <div className="post-item-info-wrapper">
         <div className="post-item-info">
@@ -26,7 +26,7 @@ const PostItem = ({post,username,userId,user}) => {
             <Link
             className="post-item-username"
             to={profileLink}>
-              {username ? username : post?.user.username}
+              {username ? username : post?.user?.username}
               </Link>
           </div>
           <div className="post-itme-date">
@@ -39,28 +39,19 @@ const PostItem = ({post,username,userId,user}) => {
         </div>
         <p className="post-item-description">
           {post?.description}
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat natus
-          delectus blanditiis accusamus. Fugit vitae odit accusamus, error nobis
-          debitis, rerum ex saepe quisquam rem qui sint deserunt consectetur
-          voluptas! Lorem ipsum dolor sit amet consectetur adipisicing elit.
-          Repudiandae itaque atque, molestiae totam, unde minus corrupti dicta
-          distinctio repellat enim doloribus consectetur odit nisi optio,
-          repellendus ea ex impedit incidunt.
         </p>
-                    {user ? (
-              <Link className="post-item-link" to={`/posts/details/${post._id}`}>
-                Read More...
-              </Link>
-            ) : (
-              <Link className="post-item-link" to="/register">
-                Read More...
-              </Link>
-            )}
-
-        {/* // {  <Link className="post-item-link" onClick={handleReadMoreClick}>  check 
-        //   Read More...
-        //   </Link> } */}
-        
+        {/* {user || isAdmin ? (  */}
+           <Link className="post-item-link" to={`/posts/details/${post._id}`}>
+           Read More...
+           </Link>
+         {/* ) : (
+            <Link className="post-item-link" to={`/register`}>
+           Read More...
+           </Link> */}
+        {/* //   <Link className="post-item-link" onClick={handleReadMoreClick}>  check 
+        //     Read More...
+        //   </Link> */}
+        {/* )} */}
          
       </div>
     </div>
