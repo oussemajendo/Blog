@@ -83,13 +83,7 @@ const PostDetails = () => {
         </div>
       </div>
       <p className="post-details-description">
-        {post?.description} ... Lorem ipsum dolor sit amet consectetur
-        adipisicing elit. Incidunt quis a omnis aut sit earum atque eveniet
-        ratione sint animi illo id accusamus obcaecati dolore voluptatibus
-        aperiam qui, provident fuga? Lorem ipsum dolor sit amet consectetur,
-        adipisicing elit. Quibusdam neque odit soluta? Fugiat, dolores!
-        Laboriosam rem quod, explicabo similique aliquam unde sed vel
-        distinctio, fugiat ab aperiam odio nesciunt quas?
+        {post?.description} 
       </p>
       <div className="post-details-icon-wrapper">
         <div>
