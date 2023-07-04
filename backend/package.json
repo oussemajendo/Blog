@@ -4,7 +4,7 @@
   "description": "backend of blog application",
   "main": "app.js",
   "scripts": {
-    "build":"cd backend && npm install && cd../frontend && npm install && npm run build",
+    "build":"cd client && npm install && npm run build",
     "server": "nodemon app.js",
     "client": "cd../frontend && npm start",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
