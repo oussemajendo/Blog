@@ -17,7 +17,7 @@ app.use(express.json());
 
 // Cors Policy
 app.use(cors({
-    origin: "http://localhost:3000",
+    origin: "https://oussemajendoubi.netlify.app",
 }));
 
 //Routes

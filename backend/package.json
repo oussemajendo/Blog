@@ -4,11 +4,11 @@
   "description": "backend of blog application",
   "main": "app.js",
   "scripts": {
-    "build":"cd client && npm install && npm run build",
+    "build": "cd client && npm install && npm run build",
     "server": "nodemon app.js",
     "client": "cd../frontend && npm start",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "start":"node backend/app.js"
+    "start": "node backend/app.js"
   },
   "author": "Oussama Jendoubi",
   "license": "ISC",
