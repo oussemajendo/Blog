@@ -38,9 +38,7 @@ app.use((req,res)=>{
     res.send("API is running...")
 });
 
-const crypto = require('crypto');
-const secretKey = crypto.randomBytes(32).toString('hex');
-console.log('Secret Key:', secretKey);
+
 
 //Running app
 const PORT = process.env.PORT || 8000 ;
